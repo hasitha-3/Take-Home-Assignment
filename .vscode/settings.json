@@ -1,0 +1,8 @@
+{
+  "typescript.tsc.autoDetect": "off",
+  "typescript.tsserver.skipLibCheck": true,
+  "typescript.enablePromptUseWorkspaceTsdk": false,
+  "files.exclude": {
+    "**/node_modules": true
+  }
+}

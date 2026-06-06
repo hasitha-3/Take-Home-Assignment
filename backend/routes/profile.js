@@ -42,7 +42,7 @@ router.put("/:userId", authenticateToken, async (req, res) => {
       return res.status(403).json({ message: "Access denied" });
     }
 
-    const { firstname, lastname, contact_number, age, bio, address, college } =
+    const { firstname, lastname, contact_number, age, bio, address, city } =
       req.body;
 
     const updates = {};
@@ -52,7 +52,7 @@ router.put("/:userId", authenticateToken, async (req, res) => {
     if (age) updates.age = Number(age);
     if (bio !== undefined) updates.bio = bio.trim();
     if (address) updates.address = address.trim();
-    if (college) updates.college = college.trim();
+    if (city) updates.city = city.trim();
 
     const updated = await User.findByIdAndUpdate(
       req.params.userId,

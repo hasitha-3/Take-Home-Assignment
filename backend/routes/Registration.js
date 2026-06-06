@@ -44,7 +44,7 @@ router.post("/", validate, async (req, res) => {
       age,
       password,
       address,
-      college,
+      city,
     } = body;
 
     // Check existing

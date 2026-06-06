@@ -68,7 +68,7 @@ export default function Profile() {
           lastname: res.data.lastname,
           bio: res.data.bio || "",
           address: res.data.address || "",
-          college: res.data.college || "",
+          city: res.data.city || "",
           contact_number: res.data.contact_number,
           age: res.data.age,
         });
@@ -299,8 +299,8 @@ export default function Profile() {
               },
               {
                 icon: <GraduationCap size={15} />,
-                label: "College",
-                val: profile.college,
+                label: "City",
+                val: profile.city,
               },
               {
                 icon: <User size={15} />,

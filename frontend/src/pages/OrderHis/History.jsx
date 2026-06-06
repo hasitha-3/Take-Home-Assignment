@@ -9,6 +9,7 @@ import {
 import { toast } from "react-hot-toast";
 import Navbar from "../Home/Navbar";
 import api from "../../api";
+import { getImageUrl } from "../../utils/categoryImages";
 
 export default function History() {
   const [orders, setOrders] = useState([]);
@@ -94,17 +95,11 @@ export default function History() {
                 <div className="space-y-2">
                   {order.items.map((item, i) => (
                     <div key={i} className="flex gap-3 items-center text-sm">
-                      {item.imageUrl ? (
-                        <img
-                          src={item.imageUrl}
-                          className="w-10 h-10 rounded-lg object-cover"
-                          alt=""
-                        />
-                      ) : (
-                        <div className="w-10 h-10 rounded-lg bg-[var(--surface-2)] flex items-center justify-center text-[var(--text-secondary)]">
-                          <Package size={20} />
-                        </div>
-                      )}
+                      <img
+                        src={getImageUrl(item.imageUrl, item.itemcategory)}
+                        className="w-10 h-10 rounded-lg object-cover"
+                        alt=""
+                      />
                       <div>
                         <p className="font-semibold capitalize">
                           {item.itemname}

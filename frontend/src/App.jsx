@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
-import { AppProvider } from "./MyContext";
+
 
 // Pages
 import Home from "./pages/Home/Home";
@@ -43,8 +43,7 @@ const AdminRoute = ({ element }) => {
 
 function App() {
   return (
-    <AppProvider>
-      <BrowserRouter>
+    <BrowserRouter>
         <Routes>
           {/* Public */}
           <Route path="/login" element={<Login />} />
@@ -123,7 +122,6 @@ function App() {
           }}
         />
       </BrowserRouter>
-    </AppProvider>
   );
 }
 

@@ -16,6 +16,7 @@ import {
 import { toast } from "react-hot-toast";
 import Navbar from "../Home/Navbar";
 import api from "../../api";
+import { getImageUrl } from "../../utils/categoryImages";
 import { useAppContext } from "../../MyContext";
 
 function OTPModal({ order, onClose }) {
@@ -272,17 +273,11 @@ export default function Cart() {
               >
                 {/* Image */}
                 <div className="w-20 h-20 rounded-xl overflow-hidden bg-[var(--surface-2)] flex-shrink-0">
-                  {item.imageUrl ? (
-                    <img
-                      src={item.imageUrl}
-                      alt={item.itemname}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-[var(--text-secondary)]">
-                      <Package size={32} />
-                    </div>
-                  )}
+                  <img
+                    src={getImageUrl(item.imageUrl, item.itemcategory)}
+                    alt={item.itemname}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
 
                 {/* Info */}

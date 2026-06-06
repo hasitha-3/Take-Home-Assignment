@@ -88,13 +88,13 @@ export default function Navbar() {
         {/* Brand */}
         <Link
           to="/home"
-          className="nav-brand mr-8 flex-shrink-0 text-2xl font-bold text-indigo-600"
+          className="nav-brand mr-4 flex-shrink-0 text-2xl font-bold text-indigo-600"
         >
           BuySell
         </Link>
 
         {/* Desktop nav links */}
-        <div className="hidden md:flex items-center gap-6 flex-shrink-0">
+        <div className="hidden md:flex items-center gap-4 flex-shrink-0">
           <Link
             to="/home"
             className={`nav-link ${isActive("/home") ? "active" : ""}`}
@@ -130,9 +130,9 @@ export default function Navbar() {
         </div>
 
         {/* Search bar */}
-        <div className="flex-1 mx-8 min-w-0 max-w-lg hidden lg:flex">
+        <div className="flex-1 mx-4 min-w-0 max-w-md hidden xl:flex">
           <div className="flex items-center w-full gap-2">
-            <div className="relative flex-1">
+            <div className="relative flex-1 min-w-0">
               <Search
                 size={16}
                 className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
@@ -144,14 +144,14 @@ export default function Navbar() {
                 onChange={(e) => setSearch(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder="Search items, brands..."
-                className="field pl-9 pr-3 h-10 text-sm w-full bg-gray-50 border-gray-200 focus:bg-white"
+                className="field pl-9 pr-3 h-10 text-sm w-full bg-gray-50 border-gray-200 focus:bg-white truncate"
                 style={{ borderRadius: "var(--radius-lg)" }}
               />
             </div>
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              className="field h-10 text-sm w-36 flex-shrink-0 bg-gray-50 border-gray-200 focus:bg-white cursor-pointer"
+              className="field h-10 text-sm w-32 flex-shrink-0 bg-gray-50 border-gray-200 focus:bg-white cursor-pointer"
               style={{ borderRadius: "var(--radius-lg)" }}
             >
               {categories.map((c) => (
@@ -160,7 +160,7 @@ export default function Navbar() {
             </select>
             <button
               onClick={handleSearch}
-              className="btn btn-primary h-10 px-4 flex-shrink-0 rounded-lg"
+              className="btn btn-primary h-10 px-3 flex-shrink-0 rounded-lg"
             >
               Search
             </button>
@@ -168,7 +168,7 @@ export default function Navbar() {
         </div>
 
         {/* Right actions */}
-        <div className="flex items-center gap-4 ml-auto flex-shrink-0">
+        <div className="flex items-center gap-2 ml-auto flex-shrink-0">
           {/* Theme toggle */}
           <button
             onClick={toggleTheme}

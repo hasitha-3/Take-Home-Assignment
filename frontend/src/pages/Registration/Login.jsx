@@ -42,22 +42,22 @@ export default function Login() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gray-50">
-      <div className="w-full max-w-md animate-fadeIn z-10 bg-white p-8 rounded-2xl shadow-xl border border-gray-100">
-        <div className="text-center mb-8">
+      <div className="w-full max-w-lg animate-fadeIn z-10 bg-white p-10 md:p-14 rounded-[2rem] shadow-2xl border border-gray-100">
+        <div className="text-center mb-10">
           <Link
             to="/home"
-            className="text-3xl font-bold text-indigo-600 tracking-tight inline-block mb-1"
+            className="text-4xl font-extrabold text-indigo-600 tracking-tight inline-block mb-2"
           >
             BuySell
           </Link>
-          <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-6">
+          <p className="text-sm font-semibold text-gray-400 uppercase tracking-widest mb-8">
             Global Marketplace
           </p>
 
-          <h2 className="text-2xl font-bold text-gray-900">
+          <h2 className="text-3xl font-bold text-gray-900">
             Sign in to your account
           </h2>
-          <p className="text-gray-500 mt-2 text-sm">
+          <p className="text-gray-500 mt-3 text-base">
             Don't have an account?{" "}
             <Link
               to="/registration"
@@ -68,17 +68,17 @@ export default function Login() {
           </p>
         </div>
 
-        <form onSubmit={handleLogin} className="space-y-5">
+        <form onSubmit={handleLogin} className="space-y-6">
           <div className="field-group">
-            <label className="field-label">Email address</label>
-            <div className="relative">
+            <label className="field-label text-base">Email address</label>
+            <div className="relative mt-2">
               <Mail
                 size={16}
                 className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]"
               />
               <input
                 type="email"
-                className="field pl-9"
+                className="field pl-9 py-3"
                 placeholder="you@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -89,15 +89,15 @@ export default function Login() {
           </div>
 
           <div className="field-group">
-            <label className="field-label">Password</label>
-            <div className="relative">
+            <label className="field-label text-base">Password</label>
+            <div className="relative mt-2">
               <Lock
                 size={16}
                 className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]"
               />
               <input
                 type={showPwd ? "text" : "password"}
-                className="field pl-9 pr-10"
+                className="field pl-9 pr-10 py-3"
                 placeholder="Enter password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -118,7 +118,7 @@ export default function Login() {
           <button
             type="submit"
             disabled={loading}
-            className="btn btn-primary btn-lg w-full mt-2"
+            className="btn btn-primary btn-lg w-full mt-4 py-4 text-lg"
           >
             {loading ? (
               <span className="flex items-center justify-center gap-2">
@@ -141,27 +141,6 @@ export default function Login() {
         </p>
       </div>
 
-      {/* Demo credentials */}
-      <div className="w-full max-w-md mt-6 p-5 rounded-xl border border-indigo-100 bg-indigo-50/50 text-sm text-gray-600">
-        <div className="flex items-center gap-2 mb-2">
-          <Lock size={14} className="text-indigo-500" />
-          <p className="font-semibold text-[var(--text-primary)]">
-            Demo credentials
-          </p>
-        </div>
-        <p className="mb-1">
-          Email:{" "}
-          <code className="text-indigo-500 font-mono bg-indigo-50 px-1.5 py-0.5 rounded">
-            aryan.mehta@example.com
-          </code>
-        </p>
-        <p>
-          Password:{" "}
-          <code className="text-indigo-500 font-mono bg-indigo-50 px-1.5 py-0.5 rounded">
-            Aryan@123
-          </code>
-        </p>
-      </div>
     </div>
   );
 }

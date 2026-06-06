@@ -22,7 +22,7 @@ A premium, full-stack marketplace application built on the MERN stack designed f
 
 ### 1. Clone & Install
 ```bash
-git clone <repo-url>
+git clone https://github.com/hasitha-3/Take-Home-Assignment.git
 cd Buy_Sell_App
 
 # Install backend dependencies
@@ -73,3 +73,26 @@ npm run dev
 ```
 
 Visit `http://localhost:5173` in your browser.
+
+## Deployment
+
+This repository is ready to be deployed for free using Vercel (Frontend) and Render (Backend).
+
+### Backend (Render)
+1. Go to [Render](https://render.com) and create a new **Web Service**.
+2. Connect your GitHub repository: `https://github.com/hasitha-3/Take-Home-Assignment.git`.
+3. Set the **Root Directory** to `backend`.
+4. Build Command: `npm install`
+5. Start Command: `node server.js`
+6. Add the environment variables from your `.env` file (e.g., `MONGODB_URI`, `SECRET_KEY`, `CLOUDINARY_*`).
+7. Once deployed, copy your Render URL (e.g., `https://buysell-api.onrender.com`).
+
+### Frontend (Vercel)
+1. Go to [Vercel](https://vercel.com) and import the same GitHub repository.
+2. Set the **Root Directory** to `frontend`.
+3. Vercel will automatically detect Vite and set the build command to `npm run build`.
+4. In the Environment Variables section, add:
+   - `VITE_API_URL`: *Your Render Backend URL* (e.g., `https://buysell-api.onrender.com`)
+5. Click **Deploy**. Vercel will handle the routing via the included `vercel.json`.
+
+*Note: After deploying the frontend, make sure to add your Vercel URL to the `FRONTEND_URL` environment variable in your Render backend settings so CORS allows the requests.*

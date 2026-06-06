@@ -22,6 +22,10 @@ import {
 import { toast } from "react-hot-toast";
 import api from "../../api";
 import { useAppContext } from "../../MyContext";
+import {
+  CATEGORY_DEFAULT_IMAGES,
+  getImageUrl,
+} from "../../utils/categoryImages";
 
 const CONDITION_COLORS = {
   "Brand New": { cls: "cond-new", bg: "badge-success" },
@@ -72,8 +76,7 @@ export default function ItemLayout({ item_info, onWishlistChange }) {
 
   const isOwnItem = seller_id?._id === info.userId || seller_id === info.userId;
   const condStyle = CONDITION_COLORS[condition] || CONDITION_COLORS["Good"];
-  const imgSrc = images?.[0]?.url && !imgError ? images[0].url : null;
-  const CategoryIcon = CATEGORY_ICONS[itemcategory] || PackageOpen;
+  const imgSrc = getImageUrl(images, itemcategory);
 
   const handleAddToCart = async (e) => {
     e.stopPropagation();
@@ -124,23 +127,15 @@ export default function ItemLayout({ item_info, onWishlistChange }) {
         className="relative overflow-hidden"
         style={{ aspectRatio: "4/3", background: "var(--surface-2)" }}
       >
-        {imgSrc ? (
-          <img
-            src={imgSrc}
-            alt={itemname}
-            className="item-card-image transition-transform duration-500 group-hover:scale-110"
-            onError={() => setImgError(true)}
-          />
-        ) : (
-          <div className="w-full h-full flex flex-col items-center justify-center">
-            <span className="mb-1 opacity-50">
-              <CategoryIcon size={48} />
-            </span>
-            <span className="text-xs text-[var(--text-muted)]">
-              {itemcategory}
-            </span>
-          </div>
-        )}
+        <img
+          src={imgSrc}
+          alt={itemname}
+          className="item-card-image transition-transform duration-500 group-hover:scale-110"
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = CATEGORY_DEFAULT_IMAGES[itemcategory] || CATEGORY_DEFAULT_IMAGES.default;
+          }}
+        />
 
         {/* Overlay badges */}
         <div className="absolute top-2 left-2 flex flex-col gap-1">

@@ -19,7 +19,9 @@ import {
 import { toast } from "react-hot-toast";
 import Navbar from "../Home/Navbar";
 import api from "../../api";
+import { CATEGORY_DEFAULT_IMAGES } from "../../utils/categoryImages";
 import { useAppContext } from "../../MyContext";
+import { getMultipleImageUrls } from "../../utils/categoryImages";
 
 const CONDITION_MAP = {
   "Brand New": { color: "var(--success)", bg: "rgba(16,185,129,0.1)" },
@@ -144,7 +146,7 @@ export default function ItemDetail() {
   const isOwnItem =
     item.seller_id?._id === info.userId || item.seller_id === info.userId;
   const cond = CONDITION_MAP[item.condition] || CONDITION_MAP["Good"];
-  const imgs = item.images?.length > 0 ? item.images : [];
+  const imgs = getMultipleImageUrls(item.images, item.itemcategory);
   const seller = item.seller_id || {};
 
   return (
@@ -163,17 +165,15 @@ export default function ItemDetail() {
           {/* ── Images ─────────────────────────────────────────────────── */}
           <div>
             <div className="relative rounded-2xl overflow-hidden aspect-square bg-[var(--surface-2)] mb-3">
-              {imgs.length > 0 ? (
                 <img
-                  src={imgs[imgIdx]?.url}
+                  src={imgs[imgIdx]}
                   alt={item.itemname}
                   className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = CATEGORY_DEFAULT_IMAGES[item.itemcategory] || CATEGORY_DEFAULT_IMAGES.default;
+                  }}
                 />
-              ) : (
-                <div className="w-full h-full flex flex-col items-center justify-center text-gray-300 opacity-30">
-                  <Package size={64} />
-                </div>
-              )}
 
               {/* Prev/Next */}
               {imgs.length > 1 && (
@@ -206,9 +206,13 @@ export default function ItemDetail() {
                     className={`flex-shrink-0 w-16 h-16 rounded-xl overflow-hidden border-2 transition-all ${imgIdx === i ? "border-[var(--brand)]" : "border-[var(--border)]"}`}
                   >
                     <img
-                      src={img.url}
+                      src={img}
                       alt=""
                       className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = CATEGORY_DEFAULT_IMAGES[item.itemcategory] || CATEGORY_DEFAULT_IMAGES.default;
+                      }}
                     />
                   </button>
                 ))}

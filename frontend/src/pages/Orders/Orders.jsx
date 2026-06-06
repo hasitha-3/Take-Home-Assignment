@@ -12,6 +12,7 @@ import {
 import { toast } from "react-hot-toast";
 import Navbar from "../Home/Navbar";
 import api from "../../api";
+import { getImageUrl } from "../../utils/categoryImages";
 
 const STATUS_STEPS = [
   "Processing",
@@ -216,18 +217,12 @@ export default function Orders() {
                 {/* Items */}
                 <div className="mt-4 space-y-2">
                   {order.items.map((item, i) => (
-                    <div key={i} className="flex gap-3 items-center text-sm">
-                      {item.imageUrl ? (
-                        <img
-                          src={item.imageUrl}
-                          className="w-10 h-10 rounded-lg object-cover"
-                          alt=""
-                        />
-                      ) : (
-                        <div className="w-10 h-10 rounded-lg bg-[var(--surface-2)] flex items-center justify-center text-[var(--text-secondary)]">
-                          <Package size={20} />
-                        </div>
-                      )}
+                    <div key={i} className="flex gap-4 p-4 items-center">
+                      <img
+                        src={getImageUrl(item.imageUrl, item.itemcategory)}
+                        className="w-16 h-16 rounded-xl object-cover"
+                        alt=""
+                      />
                       <div className="flex-1 min-w-0">
                         <p className="font-semibold capitalize truncate">
                           {item.itemname}

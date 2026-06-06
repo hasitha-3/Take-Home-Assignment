@@ -15,6 +15,7 @@ import { toast } from "react-hot-toast";
 import Navbar from "../Home/Navbar";
 import api from "../../api";
 import { useAppContext } from "../../MyContext";
+import { getImageUrl } from "../../utils/categoryImages";
 
 const CONDITION_COLORS = {
   "Brand New": "badge-success",
@@ -162,17 +163,11 @@ export default function MyListings() {
                 {/* Image */}
                 <Link to={`/items/${item._id}`} className="flex-shrink-0">
                   <div className="w-24 h-24 rounded-xl overflow-hidden bg-[var(--surface-2)]">
-                    {item.images?.[0]?.url ? (
-                      <img
-                        src={item.images[0].url}
-                        alt={item.itemname}
-                        className="w-full h-full object-cover hover:scale-105 transition-transform"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-[var(--text-secondary)]">
-                        <Package size={32} />
-                      </div>
-                    )}
+                    <img
+                      src={getImageUrl(item.images, item.itemcategory)}
+                      alt={item.itemname}
+                      className="w-full h-full object-cover hover:scale-105 transition-transform"
+                    />
                   </div>
                 </Link>
 

@@ -1,7 +1,4 @@
-# BuySell — Global Marketplace
-
-A premium, full-stack marketplace application built on the MERN stack designed for people all over the world to buy, sell, and discover amazing deals.
-
+# BuySell
 ## Features
 
 - It consists of a simple login and registration interface handling email and password authentication, along with refusing creation of accounts with same phone number or email.

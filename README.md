@@ -45,6 +45,8 @@
 
 - **Each item falls under only one category:** It is assumed that each item can belong to only one category. Ex:- An electric lamp belongs to either Home and Living or Electronics, but not both.
 
+- **Once published prices cannot be changes:** I assumed that once published an item price and description and other details cannot be changed. It can be removed and added again later, but the details are not editable.
+
 ## Tech Stack
 
 **Frontend:** React (Vite), React Router v6, Tailwind CSS v4, Framer Motion, Lucide React, Axios, React Hot Toast

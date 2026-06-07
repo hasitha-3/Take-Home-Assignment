@@ -255,14 +255,6 @@ export default function Navbar() {
           >
             <LogOut size={18} />
           </button>
-
-          {/* Mobile hamburger */}
-          <button
-            className="md:hidden btn btn-ghost btn-icon"
-            onClick={() => setMobileOpen(!mobileOpen)}
-          >
-            {mobileOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
         </div>
       </nav>
 

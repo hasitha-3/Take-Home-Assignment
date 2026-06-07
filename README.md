@@ -29,7 +29,7 @@
 
 - You can pause or remove an item you are selling from my products section.
 
-- You can add a new item with image (optional), including its Title, Categories (allows adding the item under multiple categories) , Brand, Condition, Usage duration, Price, Stock, Location and the description and other miscellaneous details.
+- You can add a new item with image (optional), including its Title, Categories (allows adding the item under a single category) , Brand, Condition, Usage duration, Price, Stock, Location and the description and other miscellaneous details.
 
 - You may edit your profile details in the profile section accessible through the top navbar including change in passwords.
 

@@ -10,6 +10,7 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [showPwd, setShowPwd] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
   const { change_info } = useAppContext();
   const navigate = useNavigate();
 
@@ -21,6 +22,7 @@ export default function Login() {
     }
 
     setLoading(true);
+    setErrorMsg("");
     try {
       const res = await api.post("/auth/login", { Email: email, password });
       const { token, userInfo } = res.data;
@@ -34,6 +36,8 @@ export default function Login() {
     } catch (err) {
       const msg =
         err.response?.data?.message || "Login failed. Please try again.";
+      setErrorMsg(msg);
+      setPassword("");
       toast.error(msg);
     } finally {
       setLoading(false);
@@ -41,27 +45,24 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gray-50">
-      <div className="w-full max-w-lg animate-fadeIn z-10 bg-white p-10 md:p-14 rounded-[2rem] shadow-2xl border border-gray-100">
+    <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-[var(--bg-page)]">
+      <div className="w-full max-w-lg animate-fadeIn z-10 glass-card shadow-2xl" style={{ padding: '3rem' }}>
         <div className="text-center mb-10">
-          <Link
+          <p
             to="/home"
-            className="text-4xl font-extrabold text-indigo-600 tracking-tight inline-block mb-2"
+            className="text-4xl font-extrabold text-[var(--brand)] tracking-tight inline-block mb-2"
           >
             BuySell
-          </Link>
-          <p className="text-sm font-semibold text-gray-400 uppercase tracking-widest mb-8">
-            Global Marketplace
           </p>
 
-          <h2 className="text-3xl font-bold text-gray-900">
+          <h2 className="text-3xl font-bold text-[var(--text-primary)]">
             Sign in to your account
           </h2>
-          <p className="text-gray-500 mt-3 text-base">
+          <p className="text-[var(--text-secondary)] mt-3 text-base">
             Don't have an account?{" "}
             <Link
               to="/registration"
-              className="text-indigo-600 font-semibold hover:underline"
+              className="text-[var(--brand)] font-semibold hover:underline"
             >
               Create one free
             </Link>
@@ -113,6 +114,9 @@ export default function Login() {
                 {showPwd ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
             </div>
+            {errorMsg && (
+              <p className="text-sm mt-2 text-[var(--danger)]">{errorMsg}</p>
+            )}
           </div>
 
           <button
@@ -127,20 +131,13 @@ export default function Login() {
               </span>
             ) : (
               <span className="flex items-center justify-center gap-2">
-                Enter Marketplace <ArrowRight size={18} />
+                Login <ArrowRight size={18} />
               </span>
             )}
           </button>
         </form>
 
-        <p className="text-center text-xs text-[var(--text-muted)] mt-6">
-          By signing in you agree to our{" "}
-          <Link to="/contact" className="hover:underline text-indigo-400">
-            Terms of Service
-          </Link>
-        </p>
       </div>
-
     </div>
   );
 }

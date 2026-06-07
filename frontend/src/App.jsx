@@ -1,6 +1,7 @@
 import React from "react";
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
-import { Toaster } from "react-hot-toast";
+import { Toaster, ToastBar, toast } from "react-hot-toast";
+import { X } from "lucide-react";
 
 
 // Pages
@@ -14,7 +15,7 @@ import History from "./pages/OrderHis/History";
 import Seller from "./pages/Home/Seller";
 import Items_show from "./pages/Item/Items_show";
 import ItemDetail from "./pages/Item/ItemDetail";
-import MyListings from "./pages/MyListings/MyListings";
+import MyProducts from "./pages/MyProducts/MyProducts";
 import Wishlist from "./pages/Wishlist/Wishlist";
 import Notifications from "./pages/Notifications/Notifications";
 import Admin from "./pages/Admin/Admin";
@@ -78,8 +79,8 @@ function App() {
             element={<ProtectedRoute element={<Seller />} />}
           />
           <Route
-            path="/my-listings"
-            element={<ProtectedRoute element={<MyListings />} />}
+            path="/my-products"
+            element={<ProtectedRoute element={<MyProducts />} />}
           />
           <Route
             path="/wishlist"
@@ -115,12 +116,32 @@ function App() {
               boxShadow: "var(--shadow-lg)",
               fontSize: "0.875rem",
               fontFamily: "Inter, sans-serif",
+              maxWidth: "400px",
             },
             success: { iconTheme: { primary: "#10b981", secondary: "#fff" } },
             error: { iconTheme: { primary: "#ef4444", secondary: "#fff" } },
             duration: 3000,
           }}
-        />
+        >
+          {(t) => (
+            <ToastBar toast={t}>
+              {({ icon, message }) => (
+                <>
+                  {icon}
+                  <div className="flex-1">{message}</div>
+                  {t.type !== "loading" && (
+                    <button
+                      onClick={() => toast.dismiss(t.id)}
+                      className="ml-2 p-1 text-[var(--text-muted)] hover:bg-[var(--surface-2)] rounded-md transition-colors flex-shrink-0"
+                    >
+                      <X size={14} />
+                    </button>
+                  )}
+                </>
+              )}
+            </ToastBar>
+          )}
+        </Toaster>
       </BrowserRouter>
   );
 }

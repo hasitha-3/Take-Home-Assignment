@@ -20,13 +20,7 @@ router.get("/", optionalAuth, async (req, res) => {
       brand,
       sellerId,
     } = req.query;
-
-    const query = { isDeleted: false, isAvailable: true };
-
-    // Exclude current user's own items (optional, if logged in)
-    if (req.user && !sellerId) {
-      query.seller_id = { $ne: req.user.userId };
-    }
+    const query = { isDeleted: false };
 
     // Category filter
     if (category && category !== "All") {
@@ -56,7 +50,7 @@ router.get("/", optionalAuth, async (req, res) => {
     // Brand filter
     if (brand) query.brand = { $regex: brand, $options: "i" };
 
-    // Seller filter (for My Listings)
+    // Seller filter (for My Products)
     if (sellerId) {
       query.seller_id = sellerId;
       delete query.isAvailable; // show seller's items regardless

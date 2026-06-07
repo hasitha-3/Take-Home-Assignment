@@ -60,50 +60,50 @@ export default function ItemsShow() {
   );
   const [page, setPage] = useState(1);
 
-  const fetchItems = useCallback(async () => {
-    setLoading(true);
-    setItems([]);
-    try {
-      const params = new URLSearchParams();
-      if (category && category !== "All") params.set("category", category);
-      if (search.trim()) params.set("search", search.trim());
-      if (sort) params.set("sort", sort);
-      if (minPrice) params.set("minPrice", minPrice);
-      if (maxPrice) params.set("maxPrice", maxPrice);
-      if (condition && condition !== "Any") params.set("condition", condition);
-      params.set("page", page);
-      params.set("limit", 12);
-
-      const res = await api.get(`/items?${params.toString()}`);
-      setItems(res.data.items || []);
-      setPagination(res.data.pagination || { total: 0, page: 1, pages: 1 });
-
-      // Sync URL
-      setSearchParams(Object.fromEntries(params));
-    } catch (err) {
-      console.error("Fetch items error:", err);
-      setItems([]);
-    } finally {
-      setLoading(false);
-    }
-  }, [category, search, sort, minPrice, maxPrice, condition, page]);
-
-  // Sync from URL on mount
+  // Sync URL to UI state whenever URL changes
   useEffect(() => {
-    const cat = searchParams.get("category");
-    const srch = searchParams.get("search");
-    if (cat && cat !== category) setCategory(cat);
-    if (srch && srch !== search) setSearch(srch);
-  }, []);
+    setCategory(searchParams.get("category") || "All");
+    setSearch(searchParams.get("search") || "");
+    setSort(searchParams.get("sort") || "newest");
+    setMinPrice(searchParams.get("minPrice") || "");
+    setMaxPrice(searchParams.get("maxPrice") || "");
+    setCondition(searchParams.get("condition") || "Any");
+    setPage(parseInt(searchParams.get("page")) || 1);
+  }, [searchParams]);
 
+  // Fetch data whenever URL changes
   useEffect(() => {
-    fetchItems();
-  }, [category, sort, condition, page]);
+    const fetchFromURL = async () => {
+      setLoading(true);
+      try {
+        const params = new URLSearchParams(searchParams);
+        if (!params.has("page")) params.set("page", 1);
+        params.set("limit", 12);
+        
+        const res = await api.get(`/items?${params.toString()}`);
+        setItems(res.data.items || []);
+        setPagination(res.data.pagination || { total: 0, page: 1, pages: 1 });
+      } catch (err) {
+        console.error("Fetch items error:", err);
+        setItems([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchFromURL();
+  }, [searchParams]);
 
   const handleSearch = (e) => {
     e?.preventDefault();
-    setPage(1);
-    fetchItems();
+    const params = new URLSearchParams();
+    if (category && category !== "All") params.set("category", category);
+    if (search.trim()) params.set("search", search.trim());
+    if (sort && sort !== "newest") params.set("sort", sort);
+    if (minPrice) params.set("minPrice", minPrice);
+    if (maxPrice) params.set("maxPrice", maxPrice);
+    if (condition && condition !== "Any") params.set("condition", condition);
+    params.set("page", 1);
+    setSearchParams(params);
   };
 
   const clearFilters = () => {
@@ -114,6 +114,13 @@ export default function ItemsShow() {
     setMaxPrice("");
     setCondition("Any");
     setPage(1);
+    setSearchParams(new URLSearchParams());
+  };
+
+  const handlePageChange = (newPage) => {
+    const params = new URLSearchParams(searchParams);
+    params.set("page", newPage);
+    setSearchParams(params);
   };
 
   const hasActiveFilters =
@@ -122,15 +129,15 @@ export default function ItemsShow() {
   return (
     <div className="min-h-screen">
       <Navbar />
-      <div className="page-container py-6">
+      <div className="page-container py-8">
         {/* ── Header ─────────────────────────────────────────────────────── */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="hero-title text-3xl text-[var(--text-primary)]">
-              {category !== "All" ? category : "All Listings"}
+            <h1 className="hero-title text-3xl md:text-4xl text-[var(--text-primary)]">
+              {category !== "All" ? category : "All Products"}
               {search && ` · "${search}"`}
             </h1>
-            <p className="text-sm text-[var(--text-secondary)] mt-0.5">
+            <p className="text-base text-[var(--text-secondary)] mt-1">
               {loading ? "Loading..." : `${pagination.total} items found`}
             </p>
           </div>
@@ -148,11 +155,11 @@ export default function ItemsShow() {
 
         {/* ── Filter Panel ───────────────────────────────────────────────── */}
         {showFilters && (
-          <div className="glass-card p-5 mb-6 animate-slideDown">
+          <div className="glass-card mb-6 animate-slideDown" style={{ padding: '1.5rem' }}>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
               {/* Search */}
               <div className="field-group mb-0">
-                <label className="field-label">Search</label>
+                <label className="field-label" style={{ marginBottom: '1.5rem' }}>Search</label>
                 <form onSubmit={handleSearch} className="flex gap-1">
                   <input
                     className="field flex-1"
@@ -168,7 +175,7 @@ export default function ItemsShow() {
 
               {/* Category */}
               <div className="field-group mb-0">
-                <label className="field-label">Category</label>
+                <label className="field-label" style={{ marginBottom: '1.5rem' }}>Category</label>
                 <select
                   className="field"
                   value={category}
@@ -185,7 +192,7 @@ export default function ItemsShow() {
 
               {/* Condition */}
               <div className="field-group mb-0">
-                <label className="field-label">Condition</label>
+                <label className="field-label" style={{ marginBottom: '1.5rem' }}>Condition</label>
                 <select
                   className="field"
                   value={condition}
@@ -202,7 +209,7 @@ export default function ItemsShow() {
 
               {/* Sort */}
               <div className="field-group mb-0">
-                <label className="field-label">Sort By</label>
+                <label className="field-label" style={{ marginBottom: '1.5rem' }}>Sort By</label>
                 <select
                   className="field"
                   value={sort}
@@ -220,35 +227,34 @@ export default function ItemsShow() {
               </div>
             </div>
 
+            <div className="divider my-4" />
+
             {/* Price range */}
             <div className="flex flex-wrap gap-3 items-end">
               <div className="field-group mb-0">
-                <label className="field-label">Min Price (₹)</label>
-                <input
-                  type="number"
-                  className="field w-32"
-                  placeholder="0"
-                  value={minPrice}
-                  onChange={(e) => setMinPrice(e.target.value)}
-                  min={0}
-                />
-              </div>
-              <div className="field-group mb-0">
-                <label className="field-label">Max Price (₹)</label>
-                <input
-                  type="number"
-                  className="field w-32"
-                  placeholder="∞"
-                  value={maxPrice}
-                  onChange={(e) => setMaxPrice(e.target.value)}
-                  min={0}
-                />
+                <label className="field-label" style={{ marginBottom: '1.5rem' }}>Price Range (₹)</label>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="number"
+                    className="field w-32"
+                    placeholder="Min"
+                    value={minPrice}
+                    onChange={(e) => setMinPrice(e.target.value)}
+                    min={0}
+                  />
+                  <span className="text-[var(--text-muted)]">–</span>
+                  <input
+                    type="number"
+                    className="field w-32"
+                    placeholder="Max"
+                    value={maxPrice}
+                    onChange={(e) => setMaxPrice(e.target.value)}
+                    min={0}
+                  />
+                </div>
               </div>
               <button
-                onClick={() => {
-                  setPage(1);
-                  fetchItems();
-                }}
+                onClick={handleSearch}
                 className="btn btn-primary"
               >
                 Apply Filters
@@ -262,25 +268,10 @@ export default function ItemsShow() {
           </div>
         )}
 
-        {/* ── Category chips ──────────────────────────────────────────────── */}
-        <div className="flex gap-2 overflow-x-auto pb-2 mb-6 scrollbar-hide">
-          {CATEGORIES.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => {
-                setCategory(cat);
-                setPage(1);
-              }}
-              className={`btn btn-sm flex-shrink-0 ${category === cat ? "btn-primary" : "btn-secondary"}`}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
 
         {/* ── Items Grid ─────────────────────────────────────────────────── */}
         {loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {Array(12)
               .fill(0)
               .map((_, i) => (
@@ -301,7 +292,7 @@ export default function ItemsShow() {
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {items.map((item) => (
               <ItemLayout key={item._id} item_info={item} />
             ))}
@@ -310,9 +301,9 @@ export default function ItemsShow() {
 
         {/* ── Pagination ──────────────────────────────────────────────────── */}
         {pagination.pages > 1 && (
-          <div className="flex items-center justify-center gap-2 mt-10">
+          <div className="flex items-center justify-center gap-2 mt-12">
             <button
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              onClick={() => handlePageChange(Math.max(1, page - 1))}
               disabled={page === 1}
               className="btn btn-secondary btn-icon"
             >
@@ -330,7 +321,7 @@ export default function ItemsShow() {
                     <span className="text-[var(--text-muted)]">…</span>
                   )}
                   <button
-                    onClick={() => setPage(p)}
+                    onClick={() => handlePageChange(p)}
                     className={`btn btn-sm ${p === page ? "btn-primary" : "btn-secondary"}`}
                   >
                     {p}
@@ -339,7 +330,7 @@ export default function ItemsShow() {
               ))}
 
             <button
-              onClick={() => setPage((p) => Math.min(pagination.pages, p + 1))}
+              onClick={() => handlePageChange(Math.min(pagination.pages, page + 1))}
               disabled={page === pagination.pages}
               className="btn btn-secondary btn-icon"
             >

@@ -26,7 +26,7 @@ export const AppProvider = ({ children }) => {
             isAdmin: false,
             avatar: "",
             address: "",
-            college: "",
+            city: "",
             sellerRating: 0,
           };
     } catch {
@@ -59,7 +59,7 @@ export const AppProvider = ({ children }) => {
       isAdmin: newInfo.isAdmin || false,
       avatar: newInfo.avatar || "",
       address: newInfo.address || "",
-      college: newInfo.college || "",
+      city: newInfo.city || "",
       sellerRating: newInfo.sellerRating || 0,
       bio: newInfo.bio || "",
     };
@@ -116,10 +116,14 @@ export const AppProvider = ({ children }) => {
 
   // ── Theme toggle ──────────────────────────────────────────────────────────
   const toggleTheme = useCallback(() => {
+    // Suppress all transitions for one frame so the theme swap is instant
+    const el = document.documentElement;
+    el.classList.add("no-transitions");
     const next = theme === "light" ? "dark" : "light";
     setTheme(next);
     localStorage.setItem("theme", next);
-    document.documentElement.setAttribute("data-theme", next);
+    el.setAttribute("data-theme", next);
+    requestAnimationFrame(() => el.classList.remove("no-transitions"));
   }, [theme]);
 
   // Apply theme on mount

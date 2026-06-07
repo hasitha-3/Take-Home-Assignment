@@ -65,8 +65,12 @@ export default function Admin() {
     return (
       <div className="min-h-screen">
         <Navbar />
-        <div className="page-container py-8 text-center">
-          Loading dashboard...
+        <div className="page-container py-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="skeleton w-full rounded-2xl h-40" />
+            <div className="skeleton w-full rounded-2xl h-40" />
+            <div className="skeleton w-full rounded-2xl h-40" />
+          </div>
         </div>
       </div>
     );
@@ -185,7 +189,7 @@ export default function Admin() {
                             alt=""
                           />
                         ) : (
-                          <div className="w-8 h-8 rounded-full bg-indigo-500 text-white flex items-center justify-center font-bold text-xs">
+                          <div className="w-8 h-8 rounded-full bg-[var(--brand)] text-white flex items-center justify-center font-bold text-xs">
                             {user.firstname[0]}
                           </div>
                         )}
@@ -214,7 +218,7 @@ export default function Admin() {
                         {!user.isAdmin && (
                           <button
                             onClick={() => toggleUserStatus(user._id)}
-                            className={`btn btn-sm ${user.isActive ? "btn-danger" : "btn-success"}`}
+                            className={`btn btn-sm ${user.isActive ? "btn-danger" : "btn-primary"}`}
                           >
                             {user.isActive ? (
                               <ShieldOff size={14} />

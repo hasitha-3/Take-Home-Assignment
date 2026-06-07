@@ -116,6 +116,12 @@ router.put("/update/:cartItemId", authenticateToken, async (req, res) => {
       return res.status(403).json({ message: "Access denied" });
     }
 
+    // Check stock
+    const dbItem = await Items.findById(cartItem.item_id);
+    if (dbItem && quantity > dbItem.stock) {
+      return res.status(400).json({ message: `Only ${dbItem.stock} left in stock` });
+    }
+
     if (quantity <= 0) {
       await cart_items.findByIdAndDelete(req.params.cartItemId);
       return res.status(200).json({ message: "Item removed from cart" });

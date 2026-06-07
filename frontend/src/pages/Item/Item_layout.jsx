@@ -72,6 +72,7 @@ export default function ItemLayout({ item_info, onWishlistChange }) {
     location,
     usageDuration,
     wishlistCount,
+    isAvailable = true,
   } = item_info;
 
   const isOwnItem = seller_id?._id === info.userId || seller_id === info.userId;
@@ -86,6 +87,10 @@ export default function ItemLayout({ item_info, onWishlistChange }) {
     }
     if (stock <= 0) {
       toast.error("Out of stock");
+      return;
+    }
+    if (!isAvailable) {
+      toast.error("The item is unavailable");
       return;
     }
 
@@ -121,7 +126,7 @@ export default function ItemLayout({ item_info, onWishlistChange }) {
   const handleCardClick = () => navigate(`/items/${_id}`);
 
   return (
-    <div className="item-card group" onClick={handleCardClick}>
+    <div className={`item-card group flex flex-col h-full ${(!isAvailable || stock <= 0) ? 'opacity-60 grayscale' : ''}`} onClick={handleCardClick}>
       {/* Image area */}
       <div
         className="relative overflow-hidden"
@@ -139,13 +144,15 @@ export default function ItemLayout({ item_info, onWishlistChange }) {
 
         {/* Overlay badges */}
         <div className="absolute top-2 left-2 flex flex-col gap-1">
-          {stock <= 0 && (
-            <span className="badge badge-danger">Out of Stock</span>
-          )}
+          {!isAvailable ? (
+            <span className="badge badge-warning">Unavailable</span>
+          ) : stock <= 0 ? (
+            <span className="badge badge-danger">Sold</span>
+          ) : null}
           {condition && (
             <span className={`badge ${condStyle.bg} text-xs`}>{condition}</span>
           )}
-          {isOwnItem && <span className="badge badge-brand">Your Listing</span>}
+          {isOwnItem && <span className="badge badge-brand">Your Product</span>}
         </div>
 
         {/* Wishlist btn */}
@@ -161,18 +168,12 @@ export default function ItemLayout({ item_info, onWishlistChange }) {
           />
         </button>
 
-        {/* Hover overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3">
-          <span className="text-white text-xs flex items-center gap-1">
-            <Eye size={12} /> {views || 0} views
-          </span>
-        </div>
       </div>
 
       {/* Body */}
-      <div className="item-card-body">
+      <div className="item-card-body p-5 flex-1 flex flex-col">
         {/* Category + Brand */}
-        <div className="flex items-center justify-between mb-1">
+        <div className="flex items-center justify-between mb-2">
           <span className="text-xs text-[var(--text-muted)] font-medium">
             {itemcategory}
           </span>
@@ -184,18 +185,18 @@ export default function ItemLayout({ item_info, onWishlistChange }) {
         </div>
 
         {/* Title */}
-        <h3 className="font-bold text-[var(--text-primary)] text-sm leading-snug mb-1 line-clamp-2 capitalize">
+        <h3 className="font-bold text-[var(--text-primary)] text-base leading-snug mb-2 line-clamp-2 capitalize">
           {itemname}
         </h3>
 
         {/* Description */}
-        <p className="text-xs text-[var(--text-secondary)] line-clamp-2 mb-2 leading-relaxed">
+        <p className="text-xs text-[var(--text-secondary)] line-clamp-2 mb-3 leading-relaxed">
           {itemdescription}
         </p>
 
         {/* Location + Usage */}
         {(location || usageDuration) && (
-          <div className="flex items-center gap-3 text-xs text-[var(--text-muted)] mb-2">
+          <div className="flex items-center gap-3 text-xs text-[var(--text-muted)] mb-3">
             {location && (
               <span className="flex items-center gap-0.5">
                 <MapPin size={10} /> {location.split(",")[0]}
@@ -211,30 +212,25 @@ export default function ItemLayout({ item_info, onWishlistChange }) {
 
         {/* Seller */}
         {seller_id?.firstname && (
-          <p className="text-xs text-[var(--text-muted)] mb-2 flex items-center gap-1">
+          <p className="text-xs text-[var(--text-muted)] mb-3 flex items-center gap-1">
             {seller_id.isOnline && <span className="online-dot" />}
             {seller_id.firstname} {seller_id.lastname}
           </p>
         )}
 
         {/* Price + CTA */}
-        <div className="flex items-center justify-between mt-2">
+        <div className="flex items-center justify-between mt-auto">
           <div>
             <p className="font-bold text-xl text-[var(--brand)]">
               ₹{itemprice.toLocaleString("en-IN")}
             </p>
-            {stock > 0 && stock <= 3 && (
-              <p className="text-xs text-orange-500 font-medium">
-                Only {stock} left!
-              </p>
-            )}
           </div>
 
           {isOwnItem ? (
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                navigate("/my-listings");
+                navigate("/my-products");
               }}
               className="btn btn-secondary btn-sm"
             >

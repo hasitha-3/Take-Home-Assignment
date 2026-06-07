@@ -148,7 +148,7 @@ router.get("/items", authenticateToken, isAdmin, async (req, res) => {
   }
 });
 
-// ─── DELETE remove any listing ────────────────────────────────────────────────
+// ─── DELETE remove any product ────────────────────────────────────────────────
 router.delete(
   "/items/:itemId",
   authenticateToken,

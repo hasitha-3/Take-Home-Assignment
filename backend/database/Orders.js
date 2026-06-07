@@ -28,51 +28,15 @@ const orderSchema = new mongoose.Schema(
     totalPrice: { type: Number, required: true },
     paymentStatus: {
       type: String,
-      enum: ["Pending", "Completed", "Failed", "Refunded"],
-      default: "Pending",
+      default: "Completed",
     },
     deliveryStatus: {
       type: String,
-      enum: [
-        "Processing",
-        "Confirmed",
-        "Shipped",
-        "Out for Delivery",
-        "Delivered",
-        "Cancelled",
-        "Returned",
-      ],
-      default: "Processing",
-    },
-
-    // Delivery OTP — 6-digit code shown to buyer, seller/partner uses to confirm delivery
-    deliveryOTP: { type: String, default: "" },
-    otpVerified: { type: Boolean, default: false },
-
-    // Delivery partner info
-    deliveryPartner: {
-      name: { type: String, default: "" },
-      phone: { type: String, default: "" },
-      partnerId: { type: String, default: "" },
-    },
-
-    // Cancellation
-    cancellationReason: { type: String, default: "" },
-    cancelledAt: { type: Date },
-    cancelledBy: {
-      type: String,
-      enum: ["buyer", "seller", "admin", ""],
-      default: "",
+      default: "Completed",
     },
 
     // Shipping address snapshot
     shippingAddress: { type: String, default: "" },
-
-    // Timestamps
-    confirmedAt: { type: Date },
-    shippedAt: { type: Date },
-    deliveredAt: { type: Date },
-    returnedAt: { type: Date },
   },
   { timestamps: true },
 );

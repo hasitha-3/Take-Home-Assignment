@@ -9,6 +9,7 @@ import {
   AlertCircle,
   ShoppingCart,
   BellOff,
+  X,
 } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { Link } from "react-router-dom";
@@ -124,11 +125,12 @@ export default function Notifications() {
             </p>
           </div>
         ) : (
-          <div className="space-y-3">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             {notifications.map((n) => (
               <div
                 key={n._id}
-                className={`glass-card p-4 flex gap-4 transition-all ${n.isRead ? "opacity-70" : "ring-1 ring-[var(--brand)] shadow-[var(--shadow-glow)]"}`}
+                className={`glass-card transition-all ${n.isRead ? "opacity-70" : "ring-1 ring-[var(--brand)] shadow-[var(--shadow-glow)]"}`}
+                style={{ padding: '1.5rem', display: 'flex', gap: '1.5rem', alignItems: 'flex-start' }}
               >
                 <div className="w-10 h-10 rounded-full bg-[var(--surface-2)] flex items-center justify-center flex-shrink-0 mt-1">
                   {TYPE_ICONS[n.type] || <Bell size={18} />}
@@ -141,14 +143,23 @@ export default function Notifications() {
                     >
                       {n.title}
                     </h3>
-                    <span className="text-xs text-[var(--text-muted)] whitespace-nowrap">
-                      {new Date(n.createdAt).toLocaleDateString("en-IN", {
-                        month: "short",
-                        day: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    </span>
+                    <div className="flex items-center gap-3">
+                      <span className="text-xs text-[var(--text-muted)] whitespace-nowrap">
+                        {new Date(n.createdAt).toLocaleDateString("en-IN", {
+                          month: "short",
+                          day: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </span>
+                      <button
+                        onClick={() => deleteNotif(n._id)}
+                        className="text-[var(--text-muted)] hover:text-red-500 transition-colors"
+                        title="Remove Notification"
+                      >
+                        <X size={16} />
+                      </button>
+                    </div>
                   </div>
 
                   <p className="text-sm text-[var(--text-secondary)] mt-1 mb-2">

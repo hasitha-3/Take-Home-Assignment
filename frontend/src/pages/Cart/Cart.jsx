@@ -19,79 +19,11 @@ import api from "../../api";
 import { getImageUrl } from "../../utils/categoryImages";
 import { useAppContext } from "../../MyContext";
 
-function OTPModal({ order, onClose }) {
-  const [otp, setOtp] = useState("");
-  const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
-
-  const verify = async () => {
-    if (otp.length !== 6) {
-      toast.error("Enter 6-digit OTP");
-      return;
-    }
-    setLoading(true);
-    try {
-      await api.post(`/orders/${order._id}/verify-otp`, { otp });
-      toast.success(
-        <span>
-          Delivery confirmed! <CheckCircle size={14} className="inline" />
-        </span>,
-      );
-      onClose();
-      navigate("/orders");
-    } catch (err) {
-      toast.error(err.response?.data?.message || "Invalid OTP");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-box" onClick={(e) => e.stopPropagation()}>
-        <div className="flex items-center justify-between mb-5">
-          <h3 className="font-bold text-lg">Confirm Delivery</h3>
-          <button onClick={onClose} className="btn btn-ghost btn-icon">
-            <X size={18} />
-          </button>
-        </div>
-        <p className="text-sm text-[var(--text-secondary)] mb-4">
-          Enter the 6-digit delivery OTP from your order confirmation. Your
-          delivery OTP was sent when the order was placed.
-        </p>
-        <div className="field-group">
-          <label className="field-label">Delivery OTP</label>
-          <input
-            type="text"
-            className="field text-center tracking-widest text-2xl font-bold"
-            placeholder="_ _ _ _ _ _"
-            maxLength={6}
-            value={otp}
-            onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
-          />
-        </div>
-        <button
-          onClick={verify}
-          disabled={loading || otp.length !== 6}
-          className="btn btn-primary w-full mt-4"
-        >
-          {loading ? (
-            <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
-          ) : (
-            "Confirm Delivery"
-          )}
-        </button>
-      </div>
-    </div>
-  );
-}
-
 export default function Cart() {
   const { info, refreshCartCount } = useAppContext();
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [placing, setPlacing] = useState(false);
-  const [otpOrder, setOtpOrder] = useState(null);
   const [address, setAddress] = useState(info.address || "");
   const navigate = useNavigate();
 
@@ -154,37 +86,11 @@ export default function Cart() {
         shippingAddress: address,
       });
 
-      const { order, deliveryOTP, deliveryPartner } = res.data;
+      const { order } = res.data;
 
-      toast.success(
-        <span>
-          Order placed! <PartyPopper size={14} className="inline" /> OTP:{" "}
-          {deliveryOTP}
-        </span>,
-      );
+      toast.success("Order placed successfully!");
       setCartItems([]);
       refreshCartCount();
-
-      // Show OTP info in a nice alert
-      setTimeout(() => {
-        toast(
-          (t) => (
-            <div>
-              <p className="font-bold mb-1 flex items-center gap-1">
-                <Package size={14} /> Delivery Partner: {deliveryPartner.name}
-              </p>
-              <p className="text-sm">Phone: {deliveryPartner.phone}</p>
-              <p className="font-mono text-lg text-center mt-2 font-bold tracking-widest flex items-center justify-center gap-2">
-                <KeyRound size={18} /> OTP: {deliveryOTP}
-              </p>
-              <p className="text-xs text-center text-gray-500 mt-1">
-                Share this OTP only with your delivery partner
-              </p>
-            </div>
-          ),
-          { duration: 10000, id: "otp-toast" },
-        );
-      }, 500);
 
       navigate("/orders");
     } catch (err) {
@@ -195,7 +101,6 @@ export default function Cart() {
   };
 
   const total = cartItems.reduce((sum, i) => sum + i.itemprice * i.quantity, 0);
-  const saving = Math.round(total * 0.05); // Simulated 5% discount
 
   if (loading) {
     return (
@@ -232,7 +137,7 @@ export default function Cart() {
               Add items to get started!
             </p>
             <Link to="/items" className="btn btn-primary btn-lg mt-2">
-              <ShoppingBag size={18} /> Browse Listings
+              <ShoppingBag size={18} /> Browse Products
             </Link>
           </div>
         </div>
@@ -243,9 +148,6 @@ export default function Cart() {
   return (
     <div className="min-h-screen">
       <Navbar />
-      {otpOrder && (
-        <OTPModal order={otpOrder} onClose={() => setOtpOrder(null)} />
-      )}
 
       <div className="page-container py-6">
         <div className="flex items-center gap-3 mb-6">
@@ -265,11 +167,12 @@ export default function Cart() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* ── Cart Items ─────────────────────────────────────────────── */}
-          <div className="lg:col-span-2 space-y-3">
+          <div className="lg:col-span-2" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             {cartItems.map((item) => (
               <div
                 key={item._id}
-                className="glass-card p-4 flex gap-4 items-start animate-fadeIn"
+                className="glass-card animate-fadeIn"
+                style={{ padding: '1.5rem', display: 'flex', gap: '1.5rem', alignItems: 'flex-start' }}
               >
                 {/* Image */}
                 <div className="w-20 h-20 rounded-xl overflow-hidden bg-[var(--surface-2)] flex-shrink-0">
@@ -291,21 +194,23 @@ export default function Cart() {
 
                   <div className="flex items-center gap-3 flex-wrap">
                     {/* Quantity */}
-                    <div className="flex items-center border border-[var(--border)] rounded-lg overflow-hidden">
+                    <div className="flex items-center border border-[var(--border)] rounded-xl overflow-hidden bg-[var(--surface)]">
                       <button
                         onClick={() => updateQty(item._id, item.quantity - 1)}
-                        className="px-2 py-1 hover:bg-[var(--surface-2)]"
+                        style={{ width: '2.5rem', height: '2.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                        className="hover:bg-[var(--surface-2)] transition-colors text-lg font-medium"
                       >
-                        <Minus size={14} />
+                        −
                       </button>
-                      <span className="px-3 py-1 font-semibold text-sm min-w-[2rem] text-center">
+                      <span className="font-semibold text-center border-x border-[var(--border)]" style={{ minWidth: '3rem', padding: '0.5rem 0' }}>
                         {item.quantity}
                       </span>
                       <button
                         onClick={() => updateQty(item._id, item.quantity + 1)}
-                        className="px-2 py-1 hover:bg-[var(--surface-2)]"
+                        style={{ width: '2.5rem', height: '2.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                        className="hover:bg-[var(--surface-2)] transition-colors text-lg font-medium"
                       >
-                        <Plus size={14} />
+                        +
                       </button>
                     </div>
 
@@ -331,7 +236,7 @@ export default function Cart() {
           </div>
 
           {/* ── Order Summary ───────────────────────────────────────────── */}
-          <div className="glass-card p-6 h-fit sticky top-24">
+          <div className="glass-card h-fit sticky top-24" style={{ padding: '1.5rem' }}>
             <h2 className="hero-title text-xl text-[var(--text-primary)] mb-4">
               Order Summary
             </h2>
@@ -339,29 +244,19 @@ export default function Cart() {
             <div className="space-y-3 mb-4">
               <div className="flex justify-between text-sm">
                 <span className="text-[var(--text-secondary)]">
-                  Subtotal ({cartItems.length} items)
+                  Items ({cartItems.length})
                 </span>
                 <span>₹{total.toLocaleString("en-IN")}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-[var(--text-secondary)]">
-                  Platform Discount (5%)
-                </span>
-                <span className="text-[var(--success)]">
-                  −₹{saving.toLocaleString("en-IN")}
-                </span>
-              </div>
-              <div className="flex justify-between text-sm">
                 <span className="text-[var(--text-secondary)]">Delivery</span>
-                <span className="text-[var(--success)] font-semibold flex items-center gap-1">
-                  FREE <PartyPopper size={14} />
-                </span>
+                <span className="text-[var(--success)] font-semibold">Free</span>
               </div>
               <div className="divider" />
               <div className="flex justify-between">
                 <span className="font-bold">Total</span>
-                <span className="hero-title text-2xl text-[var(--brand)]">
-                  ₹{(total - saving).toLocaleString("en-IN")}
+                <span className="text-xl font-bold text-[var(--brand)]">
+                  ₹{total.toLocaleString("en-IN")}
                 </span>
               </div>
             </div>
@@ -389,7 +284,7 @@ export default function Cart() {
                   Placing Order...
                 </span>
               ) : (
-                `Place Order · ₹${(total - saving).toLocaleString("en-IN")}`
+                `Place Order · ₹${total.toLocaleString("en-IN")}`
               )}
             </button>
 

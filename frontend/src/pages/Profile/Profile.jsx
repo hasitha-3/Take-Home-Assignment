@@ -153,7 +153,7 @@ export default function Profile() {
       <Navbar />
       <div className="page-container py-6 max-w-3xl">
         {/* ── Header Card ──────────────────────────────────────────────── */}
-        <div className="glass-card p-6 mb-5 animate-fadeIn">
+        <div className="glass-card animate-fadeIn" style={{ padding: '1.5rem', marginBottom: '1.5rem' }}>
           <div className="flex items-start gap-5 flex-wrap">
             {/* Avatar */}
             <div className="relative">
@@ -280,7 +280,7 @@ export default function Profile() {
         </div>
 
         {/* ── Contact Info ─────────────────────────────────────────────── */}
-        <div className="glass-card p-6 mb-5">
+        <div className="glass-card" style={{ padding: '1.5rem', marginBottom: '1.5rem' }}>
           <h2 className="font-bold text-[var(--text-primary)] mb-4">
             Contact & Details
           </h2>
@@ -326,7 +326,7 @@ export default function Profile() {
 
         {/* ── Edit Form ─────────────────────────────────────────────────── */}
         {editing && (
-          <div className="glass-card p-6 mb-5 animate-scaleIn">
+          <div className="glass-card animate-scaleIn" style={{ padding: '1.5rem', marginBottom: '1.5rem' }}>
             <h2 className="font-bold text-[var(--text-primary)] mb-4">
               Edit Profile
             </h2>
@@ -397,7 +397,7 @@ export default function Profile() {
 
         {/* ── Change Password (own profile only) ───────────────────────── */}
         {isOwn && (
-          <div className="glass-card p-6">
+          <div className="glass-card" style={{ padding: '1.5rem' }}>
             <div className="flex items-center justify-between mb-3">
               <h2 className="font-bold text-[var(--text-primary)]">Security</h2>
               <button

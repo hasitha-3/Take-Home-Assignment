@@ -9,7 +9,7 @@ import {
 
 const router = express.Router();
 
-// ─── PUT edit own listing ─────────────────────────────────────────────────────
+// ─── PUT edit own product ─────────────────────────────────────────────────────
 router.put(
   "/:itemId",
   authenticateToken,
@@ -25,7 +25,7 @@ router.put(
       if (item.seller_id.toString() !== req.user.userId) {
         return res
           .status(403)
-          .json({ message: "You can only edit your own listings" });
+          .json({ message: "You can only edit your own products" });
       }
 
       const {
@@ -77,7 +77,7 @@ router.put(
       }
 
       await item.save();
-      res.status(200).json({ message: "Listing updated", item });
+      res.status(200).json({ message: "Product updated", item });
     } catch (err) {
       console.error("Edit item error:", err);
       res.status(500).json({ message: "Server error", error: err.message });
@@ -85,7 +85,7 @@ router.put(
   },
 );
 
-// ─── DELETE own listing (soft delete) ────────────────────────────────────────
+// ─── DELETE own product (soft delete) ────────────────────────────────────────
 router.delete("/:itemId", authenticateToken, async (req, res) => {
   try {
     const item = await Items.findById(req.params.itemId);
@@ -97,14 +97,14 @@ router.delete("/:itemId", authenticateToken, async (req, res) => {
     if (item.seller_id.toString() !== req.user.userId) {
       return res
         .status(403)
-        .json({ message: "You can only delete your own listings" });
+        .json({ message: "You can only delete your own products" });
     }
 
     item.isDeleted = true;
     item.isAvailable = false;
     await item.save();
 
-    res.status(200).json({ message: "Listing removed successfully" });
+    res.status(200).json({ message: "Product removed successfully" });
   } catch (err) {
     console.error("Delete item error:", err);
     res.status(500).json({ message: "Server error", error: err.message });

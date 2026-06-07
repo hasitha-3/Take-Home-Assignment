@@ -15,56 +15,6 @@ import {
 import api from "../../api";
 import { useAppContext } from "../../MyContext";
 
-function passwordStrength(pwd) {
-  let score = 0;
-  if (pwd.length >= 6) score++;
-  if (pwd.length >= 10) score++;
-  if (/[A-Z]/.test(pwd)) score++;
-  if (/[0-9]/.test(pwd)) score++;
-  if (/[^A-Za-z0-9]/.test(pwd)) score++;
-  return score;
-}
-
-const StrengthBar = ({ password }) => {
-  const s = passwordStrength(password);
-  const label =
-    ["", "Very Weak", "Weak", "Fair", "Strong", "Very Strong"][s] || "";
-  const color =
-    [
-      "",
-      "strength-weak",
-      "strength-weak",
-      "strength-medium",
-      "strength-strong",
-      "strength-strong",
-    ][s] || "";
-  if (!password) return null;
-
-  return (
-    <div className="mt-1">
-      <div className="progress-bar">
-        <div
-          className={`progress-fill ${color}`}
-          style={{ width: `${(s / 5) * 100}%`, background: undefined }}
-        />
-      </div>
-      <p
-        className="text-xs mt-1"
-        style={{
-          color:
-            s <= 2
-              ? "var(--danger)"
-              : s === 3
-                ? "var(--warning)"
-                : "var(--success)",
-        }}
-      >
-        {label}
-      </p>
-    </div>
-  );
-};
-
 export default function Registration() {
   const navigate = useNavigate();
   const { change_info } = useAppContext();
@@ -125,28 +75,25 @@ export default function Registration() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-gray-50">
-      <div className="w-full max-w-2xl animate-fadeIn z-10 bg-white p-8 rounded-2xl shadow-xl border border-gray-100">
+    <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-[var(--bg-page)]">
+      <div className="w-full max-w-2xl animate-fadeIn z-10 glass-card shadow-xl" style={{ padding: '2rem' }}>
         {/* Header */}
         <div className="text-center mb-8">
           <Link
             to="/login"
-            className="text-3xl font-bold text-indigo-600 tracking-tight inline-block mb-1"
+            className="text-3xl font-bold text-[var(--brand)] tracking-tight inline-block mb-1"
           >
             BuySell
           </Link>
-          <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-6">
-            Global Marketplace
-          </p>
 
-          <h2 className="text-2xl font-bold text-gray-900">
+          <h2 className="text-2xl font-bold text-[var(--text-primary)]">
             Create your account
           </h2>
-          <p className="text-gray-500 mt-2 text-sm">
+          <p className="text-[var(--text-secondary)] mt-2 text-sm">
             Already a member?{" "}
             <Link
               to="/login"
-              className="text-indigo-600 font-semibold hover:underline"
+              className="text-[var(--brand)] font-semibold hover:underline"
             >
               Sign in
             </Link>
@@ -289,10 +236,8 @@ export default function Registration() {
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-[var(--text-primary)]"
                   onClick={() => setShowPwd(!showPwd)}
                 >
-                  {showPwd ? <EyeOff size={15} /> : <Eye size={15} />}
                 </button>
               </div>
-              <StrengthBar password={form.password} />
             </div>
             <div className="field-group mb-0">
               <label className="field-label">Confirm Password</label>

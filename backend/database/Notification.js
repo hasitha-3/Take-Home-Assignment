@@ -21,7 +21,6 @@ const notificationSchema = new mongoose.Schema(
         "wishlist_alert",
         "price_drop",
         "system",
-        "otp_generated",
       ],
       required: true,
     },

@@ -4,6 +4,10 @@ dotenv.config();
 
 const JWT_SECRET = process.env.SECRET_KEY || "buy_sell_rent_secret_key";
 
+if (!process.env.SECRET_KEY) {
+  console.warn("⚠️  WARNING: SECRET_KEY not set in env. Using insecure default.");
+}
+
 /**
  * Middleware to verify JWT token from Authorization header.
  * Sets req.user = { userId, email }

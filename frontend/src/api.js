@@ -20,7 +20,8 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    const originalRequest = error.config;
+    if (error.response?.status === 401 && !originalRequest.url.includes('/auth/login')) {
       localStorage.removeItem("userToken");
       localStorage.removeItem("userId");
       localStorage.removeItem("userInfo");

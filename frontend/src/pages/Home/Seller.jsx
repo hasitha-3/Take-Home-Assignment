@@ -215,8 +215,8 @@ export default function Seller() {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      toast.success("Item listed successfully! 🎉");
-      navigate("/my-listings");
+      toast.success("Item listed successfully!");
+      navigate("/my-products");
     } catch (err) {
       toast.error(err.response?.data?.message || "Failed to list item");
     } finally {
@@ -229,20 +229,17 @@ export default function Seller() {
       <Navbar />
       <div className="page-container py-6 max-w-3xl">
         <div className="mb-6">
-          <p className="text-xs font-bold uppercase tracking-widest text-indigo-500 mb-1">
-            New Listing
-          </p>
           <h1 className="hero-title text-3xl text-[var(--text-primary)]">
-            List an Item
+            List an Item for Sale
           </h1>
-          <p className="text-[var(--text-secondary)] text-sm mt-0.5">
-            Fill in all the details to attract the right buyers
+          <p className="text-[var(--text-secondary)] text-sm mt-1">
+            Fill in the details below and post your product.
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <form onSubmit={handleSubmit} className="space-y-6">
           {/* ── Images ─────────────────────────────────────────────────── */}
-          <div className="glass-card p-5">
+          <div className="glass-card" style={{ padding: '1.5rem' }}>
             <h2 className="font-bold text-[var(--text-primary)] mb-3 flex items-center gap-2">
               <Camera size={16} /> Photos
             </h2>
@@ -250,7 +247,7 @@ export default function Seller() {
           </div>
 
           {/* ── Basic Info ──────────────────────────────────────────────── */}
-          <div className="glass-card p-5">
+          <div className="glass-card" style={{ padding: '1.5rem' }}>
             <h2 className="font-bold text-[var(--text-primary)] mb-4">
               Basic Information
             </h2>
@@ -366,7 +363,7 @@ export default function Seller() {
           </div>
 
           {/* ── Tags ────────────────────────────────────────────────────── */}
-          <div className="glass-card p-5">
+          <div className="glass-card" style={{ padding: '1.5rem' }}>
             <h2 className="font-bold text-[var(--text-primary)] mb-3">
               Tags (max 10)
             </h2>
@@ -430,7 +427,7 @@ export default function Seller() {
           </div>
 
           {/* ── Specifications ───────────────────────────────────────────── */}
-          <div className="glass-card p-5">
+          <div className="glass-card" style={{ padding: '1.5rem' }}>
             <div className="flex items-center justify-between mb-3">
               <h2 className="font-bold text-[var(--text-primary)]">
                 Specifications
@@ -486,7 +483,7 @@ export default function Seller() {
               </span>
             ) : (
               <>
-                <Tag size={18} /> Publish Listing <ArrowRight size={18} />
+                <Tag size={18} /> Publish Product <ArrowRight size={18} />
               </>
             )}
           </button>

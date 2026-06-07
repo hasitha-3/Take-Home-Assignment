@@ -88,6 +88,14 @@ export default function ItemDetail() {
   }, [itemId]);
 
   const handleAddToCart = async () => {
+    if (item.stock <= 0) {
+      toast.error("Out of stock");
+      return;
+    }
+    if (!item.isAvailable) {
+      toast.error("The item is unavailable");
+      return;
+    }
     if (isOwnItem) {
       toast.error("You cannot buy your own item!");
       return;
@@ -95,7 +103,7 @@ export default function ItemDetail() {
     setAdding(true);
     try {
       await api.post("/cart/add", { item_info: item, quantity });
-      toast.success(`Added ${quantity}x ${item.itemname} to cart 🛒`);
+      toast.success(`Added ${quantity}x ${item.itemname} to cart`);
       refreshCartCount();
     } catch (err) {
       toast.error(err.response?.data?.message || "Failed to add to cart");
@@ -108,7 +116,7 @@ export default function ItemDetail() {
     try {
       const res = await api.post(`/wishlist/toggle/${itemId}`);
       setWishlisted(res.data.wishlisted);
-      toast(res.data.wishlisted ? "❤️ Added to wishlist" : "💔 Removed");
+      toast(res.data.wishlisted ? "Added to wishlist" : "Removed from wishlist");
     } catch {
       toast.error("Could not update wishlist");
     }
@@ -158,13 +166,13 @@ export default function ItemDetail() {
           onClick={() => navigate(-1)}
           className="btn btn-ghost btn-sm mb-5 gap-1"
         >
-          <ChevronLeft size={16} /> Back to listings
+          <ChevronLeft size={16} /> Back
         </button>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
           {/* ── Images ─────────────────────────────────────────────────── */}
           <div>
-            <div className="relative rounded-2xl overflow-hidden aspect-square bg-[var(--surface-2)] mb-3">
+            <div className={`relative rounded-2xl overflow-hidden aspect-square bg-[var(--surface-2)] mb-3 ${(!item.isAvailable || item.stock <= 0) ? 'opacity-60 grayscale' : ''}`}>
                 <img
                   src={imgs[imgIdx]}
                   alt={item.itemname}
@@ -231,10 +239,12 @@ export default function ItemDetail() {
               >
                 {item.condition}
               </span>
-              {item.isAvailable && item.stock > 0 ? (
-                <span className="badge badge-success">In Stock</span>
+              {!item.isAvailable ? (
+                <span className="badge badge-warning">Unavailable</span>
+              ) : item.stock <= 0 ? (
+                <span className="badge badge-danger">Sold</span>
               ) : (
-                <span className="badge badge-danger">Unavailable</span>
+                <span className="badge badge-success">In Stock</span>
               )}
             </div>
 
@@ -269,36 +279,33 @@ export default function ItemDetail() {
               <p className="hero-title text-4xl text-[var(--brand)]">
                 ₹{item.itemprice.toLocaleString("en-IN")}
               </p>
-              {item.stock <= 3 && item.stock > 0 && (
-                <p className="text-sm text-orange-500 font-medium mt-1 flex items-center gap-1">
-                  <Zap size={14} /> Only {item.stock} left in stock
-                </p>
-              )}
             </div>
 
             {/* Quantity + CTA */}
             {!isOwnItem && item.isAvailable && item.stock > 0 && (
-              <div className="flex items-center gap-3 mb-4">
-                <div className="flex items-center border border-[var(--border)] rounded-xl overflow-hidden">
+              <div className="flex items-center gap-4 mb-5">
+                <div className="flex items-center border border-[var(--border)] rounded-xl overflow-hidden bg-[var(--surface)]">
                   <button
                     onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                    className="px-3 py-2 hover:bg-[var(--surface-2)]"
+                    style={{ width: '2.5rem', height: '2.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                    className="hover:bg-[var(--surface-2)] transition-colors text-lg font-medium"
                   >
                     −
                   </button>
-                  <span className="px-4 py-2 font-semibold min-w-[2rem] text-center">
+                  <span className="font-semibold text-center border-x border-[var(--border)]" style={{ minWidth: '3rem', padding: '0.5rem 0' }}>
                     {quantity}
                   </span>
                   <button
                     onClick={() =>
                       setQuantity((q) => Math.min(item.stock, q + 1))
                     }
-                    className="px-3 py-2 hover:bg-[var(--surface-2)]"
+                    style={{ width: '2.5rem', height: '2.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                    className="hover:bg-[var(--surface-2)] transition-colors text-lg font-medium"
                   >
                     +
                   </button>
                 </div>
-                <span className="text-xs text-[var(--text-muted)]">
+                <span className="text-sm font-medium text-[var(--text-muted)]">
                   {item.stock} available
                 </span>
               </div>
@@ -307,16 +314,16 @@ export default function ItemDetail() {
             <div className="flex gap-3 flex-wrap">
               {isOwnItem ? (
                 <button
-                  onClick={() => navigate("/my-listings")}
+                  onClick={() => navigate("/my-products")}
                   className="btn btn-secondary btn-lg flex-1"
                 >
-                  <Tag size={18} /> Manage Listing
+                  <Tag size={18} /> Manage Product
                 </button>
               ) : (
                 <button
                   onClick={handleAddToCart}
                   disabled={!item.isAvailable || item.stock <= 0 || adding}
-                  className="btn btn-primary btn-lg flex-1"
+                  className="btn btn-primary btn-lg flex-1 gap-2"
                 >
                   {adding ? (
                     <span className="w-5 h-5 border-2 border-white/40 border-t-white rounded-full animate-spin" />
@@ -346,9 +353,9 @@ export default function ItemDetail() {
         </div>
 
         {/* ── Tabs (Full Width) ─────────────────────────────────────────────── */}
-        <div className="mt-8">
+        <div style={{ marginTop: '4rem' }}>
           {/* Tab Navigation */}
-          <div className="flex border-b border-[var(--border)] mb-6 gap-6">
+          <div className="flex border-b border-[var(--border)] gap-12" style={{ marginBottom: '3rem' }}>
             {["details", "specifications", "reviews"].map((tab) => (
               <button
                 key={tab}
@@ -370,9 +377,9 @@ export default function ItemDetail() {
           {/* Tab Content */}
           <div className="animate-fadeIn">
             {activeTab === "details" && (
-              <div className="space-y-6 max-w-4xl">
+              <div className="max-w-4xl" style={{ display: 'flex', flexDirection: 'column', gap: '3rem' }}>
                 <div>
-                  <h3 className="font-bold text-sm text-[var(--text-secondary)] uppercase tracking-wide mb-2">
+                  <h3 className="font-bold text-sm text-[var(--text-secondary)] uppercase tracking-wide" style={{ marginBottom: '1.5rem' }}>
                     Description
                   </h3>
                   <p className="text-[var(--text-primary)] text-sm leading-relaxed whitespace-pre-wrap">
@@ -381,12 +388,12 @@ export default function ItemDetail() {
                 </div>
 
                 <div>
-                  <h3 className="font-bold text-sm text-[var(--text-secondary)] uppercase tracking-wide mb-3">
+                  <h3 className="font-bold text-sm text-[var(--text-secondary)] uppercase tracking-wide" style={{ marginBottom: '1.5rem' }}>
                     Key Information
                   </h3>
                   <div className="grid grid-cols-2 gap-4">
                     {item.usageDuration && (
-                      <div className="glass-card p-3 flex items-center gap-3">
+                      <div className="glass-card flex items-center gap-4" style={{ padding: '1.5rem', gap: '1.25rem' }}>
                         <div className="p-2 bg-[var(--surface-2)] rounded-lg text-[var(--brand)]">
                           <Zap size={18} />
                         </div>
@@ -401,7 +408,7 @@ export default function ItemDetail() {
                       </div>
                     )}
                     {item.location && (
-                      <div className="glass-card p-3 flex items-center gap-3">
+                      <div className="glass-card flex items-center gap-4" style={{ padding: '1.5rem', gap: '1.25rem' }}>
                         <div className="p-2 bg-[var(--surface-2)] rounded-lg text-[var(--brand)]">
                           <MapPin size={18} />
                         </div>
@@ -415,7 +422,7 @@ export default function ItemDetail() {
                         </div>
                       </div>
                     )}
-                    <div className="glass-card p-3 flex items-center gap-3">
+                    <div className="glass-card flex items-center gap-4" style={{ padding: '1.5rem', gap: '1.25rem' }}>
                       <div className="p-2 bg-[var(--surface-2)] rounded-lg text-[var(--brand)]">
                         <Eye size={18} />
                       </div>
@@ -426,7 +433,7 @@ export default function ItemDetail() {
                         <p className="text-sm font-semibold">{item.views}</p>
                       </div>
                     </div>
-                    <div className="glass-card p-3 flex items-center gap-3">
+                    <div className="glass-card flex items-center gap-4" style={{ padding: '1.5rem', gap: '1.25rem' }}>
                       <div className="p-2 bg-[var(--surface-2)] rounded-lg text-[var(--brand)]">
                         <Calendar size={18} />
                       </div>
@@ -448,17 +455,18 @@ export default function ItemDetail() {
             )}
 
             {activeTab === "specifications" && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl">
+              <div className="flex flex-col max-w-4xl" style={{ gap: '3rem' }}>
                 {item.specifications?.length > 0 ? (
                   <div>
-                    <h3 className="font-bold text-sm text-[var(--text-secondary)] uppercase tracking-wide mb-3">
+                    <h3 className="font-bold text-sm text-[var(--text-secondary)] uppercase tracking-wide" style={{ marginBottom: '1.5rem' }}>
                       Technical Specifications
                     </h3>
                     <div className="glass-card overflow-hidden rounded-xl">
                       {item.specifications.map((spec, i) => (
                         <div
                           key={i}
-                          className={`flex px-4 py-3 text-sm ${i % 2 === 0 ? "bg-[var(--surface-2)]/50" : ""}`}
+                          className={`flex text-sm ${i % 2 === 0 ? "bg-[var(--surface-2)]/50" : ""}`}
+                          style={{ padding: '1rem 1.5rem' }}
                         >
                           <span className="w-1/3 text-[var(--text-muted)] font-medium">
                             {spec.key}
@@ -480,10 +488,10 @@ export default function ItemDetail() {
                 {/* Seller Info */}
                 {seller.firstname && (
                   <div>
-                    <h3 className="font-bold text-sm text-[var(--text-secondary)] uppercase tracking-wide mb-3">
+                    <h3 className="font-bold text-sm text-[var(--text-secondary)] uppercase tracking-wide" style={{ marginBottom: '1.5rem' }}>
                       Seller Information
                     </h3>
-                    <div className="glass-card p-5">
+                    <div className="glass-card" style={{ padding: '1.5rem' }}>
                       <div className="flex items-start gap-4">
                         {seller.avatar ? (
                           <img
@@ -547,7 +555,7 @@ export default function ItemDetail() {
               <div className="max-w-4xl">
                 {reviews.length > 0 ? (
                   <>
-                    <div className="flex items-center gap-3 mb-6">
+                    <div className="flex items-center gap-3" style={{ marginBottom: '2.5rem' }}>
                       <h3 className="hero-title text-2xl text-[var(--text-primary)]">
                         Reviews
                       </h3>
@@ -562,10 +570,10 @@ export default function ItemDetail() {
                         </span>
                       </div>
                     </div>
-                    <div className="space-y-4">
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
                       {reviews.map((r) => (
-                        <div key={r._id} className="glass-card p-5">
-                          <div className="flex items-center gap-3 mb-3">
+                        <div key={r._id} className="glass-card" style={{ padding: '1.5rem' }}>
+                          <div className="flex items-center gap-3" style={{ marginBottom: '1.25rem' }}>
                             {r.buyer_id?.avatar ? (
                               <img
                                 src={r.buyer_id.avatar}
@@ -612,12 +620,13 @@ export default function ItemDetail() {
                     </div>
                   </>
                 ) : (
-                  <div className="text-center py-10 bg-[var(--surface-2)] rounded-xl border border-[var(--border)] max-w-xl mx-auto">
+                  <div className="text-center bg-[var(--surface-2)] rounded-xl border border-[var(--border)] max-w-xl mx-auto" style={{ padding: '1.5rem 0' }}>
                     <Star
                       size={32}
-                      className="mx-auto text-[var(--text-muted)] mb-3 opacity-50"
+                      className="text-[var(--text-muted)] opacity-50"
+                      style={{ display: 'block', margin: '0 auto 0.5rem auto' }}
                     />
-                    <h4 className="font-bold text-[var(--text-primary)] mb-1">
+                    <h4 className="font-bold text-[var(--text-primary)]" style={{ marginBottom: '0.25rem' }}>
                       No reviews yet
                     </h4>
                     <p className="text-sm text-[var(--text-secondary)]">

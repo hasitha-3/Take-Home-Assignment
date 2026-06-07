@@ -143,7 +143,7 @@ export default function Navbar() {
         {/* Search bar */}
         <div className="flex-1 mx-8 min-w-0 max-w-md hidden xl:flex">
           <div className="flex items-center w-full gap-2">
-            <div className="relative flex-1" style={{ minWidth: '150px' }}>
+            <div className="relative flex-1" style={{ minWidth: '10rem' }}>
               <Search
                 size={16}
                 className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
@@ -170,8 +170,8 @@ export default function Navbar() {
                   navigate(`/items?category=${encodeURIComponent(newCategory)}`);
                 }
               }}
-              className="field h-10 text-sm w-28 flex-shrink-0 cursor-pointer"
-              style={{ borderRadius: "var(--radius-lg)" }}
+              className="field h-10 text-sm flex-shrink-0 cursor-pointer"
+              style={{ borderRadius: "var(--radius-lg)", width: "10rem"}}
             >
               {categories.map((c) => (
                 <option key={c}>{c}</option>
